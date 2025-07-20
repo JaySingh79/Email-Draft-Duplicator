@@ -1,0 +1,1 @@
+draft_dupli\Scripts\activate && python "backend server\duplicator.py"

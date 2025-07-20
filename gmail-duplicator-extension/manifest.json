@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Gmail Draft Duplicator",
+  "version": "1.0",
+  "description": "Duplicate any Gmail draft in one click.",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://localhost:5000/*"
+  ],
+  "action": {
+    "default_title": "Duplicate Gmail Draft",
+    "default_popup": "popup.html",
+    "default_icon": "logo.png"
+  },
+  "icons": {
+    "16": "logo.png",
+    "48": "logo.png",
+    "128": "logo.png"
+  }
+}
