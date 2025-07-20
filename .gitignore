@@ -1,3 +1,4 @@
 backend_server/credentials.json
 draft_dupli
 token.pickle
+backend_server/__pycache__

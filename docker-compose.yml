@@ -6,5 +6,5 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ./backend_server:/app/backend
+      - ./backend_server:/app/backend_server
     restart: unless-stopped
