@@ -18,8 +18,8 @@ APP_HOST = '127.0.0.1'
 APP_PORT = 5000
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 # SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
-CREDENTIALS_FILE = 'backend server\credentials.json'
-TOKEN_FILE = 'token.json'
+CREDENTIALS_FILE = 'backend server\\credentials.json'
+TOKEN_FILE = 'token.pickle'
 
 # -----------------------------------------------------------
 # Flask setup
@@ -40,8 +40,8 @@ def get_gmail_service():
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first time.
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
+    if os.path.exists(TOKEN_FILE):
+        with open(TOKEN_FILE, 'rb') as token:
             creds = pickle.load(token)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
@@ -49,10 +49,10 @@ def get_gmail_service():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                'backend server\credentials.json', SCOPES)
+                CREDENTIALS_FILE, SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open('token.pickle', 'wb') as token:
+        with open(TOKEN_FILE, 'wb') as token:
             pickle.dump(creds, token)
 
     service = build('gmail', 'v1', credentials=creds, cache_discovery=False)
@@ -151,15 +151,33 @@ def duplicate_draft():
             raise ValueError("Draft has no 'raw' message field.")
 
         # 3) Loop and create new drafts
+        # created = 0
+        # for _ in range(copies):
+        #     body = {
+        #         'message': {
+        #             'raw': raw_message
+        #         }
+        #     }
+        #     service.users().drafts().create(userId='me', body=body).execute()
+        #     created += 1
+        
+        ## using batch requests
+        batch = service.new_batch_http_request()
         created = 0
-        for _ in range(copies):
-            body = {
-                'message': {
-                    'raw': raw_message
-                }
-            }
-            service.users().drafts().create(userId='me', body=body).execute()
-            created += 1
+
+        def callback(request_id, response, exception):
+            nonlocal created
+            if exception is None:
+                created += 1
+            else:
+                print(f"Error creating draft {request_id}: {exception}")
+
+        for i in range(copies):
+            body = {'message': {'raw': raw_message}}
+            batch.add(service.users().drafts().create(userId='me', body=body), request_id=str(i))
+
+        batch.execute()
+
 
         return jsonify({'status': 'success', 'duplicated': created})
 
@@ -178,4 +196,4 @@ def status():
 # -----------------------------------------------------------
 if __name__ == '__main__':
     logger.info(f"Starting Flask app at http://{APP_HOST}:{APP_PORT}")
-    app.run(host=APP_HOST, port=APP_PORT, debug=False)
+    app.run(host=APP_HOST, port=APP_PORT, debug=True)
