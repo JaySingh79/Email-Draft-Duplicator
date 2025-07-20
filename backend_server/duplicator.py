@@ -18,7 +18,7 @@ APP_HOST = '127.0.0.1'
 APP_PORT = 5000
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 # SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
-CREDENTIALS_FILE = 'backend server\\credentials.json'
+CREDENTIALS_FILE = 'backend_server/credentials.json'
 TOKEN_FILE = 'token.pickle'
 
 # -----------------------------------------------------------

@@ -1,0 +1,5 @@
+token.pickle
+draft_dupli/
+backend_server/credentials.json
+.git/
+.gitignore
