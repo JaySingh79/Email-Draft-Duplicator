@@ -1,1 +1,2 @@
-draft_dupli\Scripts\activate && python "backend server\duplicator.py"
+"draft_dupli\Scripts\python.exe" "backend_server\duplicator.py"
+pause
